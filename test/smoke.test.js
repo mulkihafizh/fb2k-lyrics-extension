@@ -37,6 +37,11 @@ function makeSandbox(files) {
 		Resize() { return img; },
 		Dispose() {},
 		Clone() { return img; },
+		GetColourSchemeJSON: () => JSON.stringify([
+			{ colour: 0xFF3366CC | 0, count: 100 },
+			{ colour: 0xFFCC3366 | 0, count: 80 },
+			{ colour: 0xFF33CC66 | 0, count: 60 }
+		]),
 		GetColourScheme: () => ({
 			toArray: () => [0xFF3366CC | 0, 0xFFCC3366 | 0, 0xFF33CC66 | 0]
 		})
@@ -329,6 +334,12 @@ integration('JANNA', samples('4_Jannabi_May_the_TENDERNESS_be_with_you_feat_KARI
 	assert.ok(c2.async > 0, 'async art requested via metadb.GetAlbumArtAsync');
 	ctx2.on_get_album_art_done(sb2.meta, 0, sb2.utils.CreateImage());
 	assert.ok(ev(ctx2, 'Bg.hasArt'), 'on_get_album_art_done(handle, id, image) applies art');
+	const curCols = ev(ctx2, 'currentColors()');
+	assert.ok(Array.isArray(curCols) && curCols.length > 0, 'currentColors returns array');
+	for (let i = 0; i < curCols.length; i++) {
+		assert.ok(Array.isArray(curCols[i]) && curCols[i].length === 3, 'each color is [r, g, b]');
+		assert.ok(!Number.isNaN(curCols[i][0]) && !Number.isNaN(curCols[i][1]) && !Number.isNaN(curCols[i][2]), 'no NaN in colors');
+	}
 	ctx2.on_playback_dynamic_info_track(1);
 	console.log('embedded art OK');
 }

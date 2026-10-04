@@ -866,8 +866,8 @@ function currentColors() {
 	var n = Math.max(Bg.cur.length, 1);
 	var out = [];
 	for (var i = 0; i < n; i++) {
-		var a = (Bg.prev.length && Bg.prev[i % Bg.prev.length]) || CFG.bg.defaultColors[0];
-		var b = (Bg.cur.length && Bg.cur[i % Bg.cur.length]) || CFG.bg.defaultColors[0];
+		var a = (Bg.prev.length && Bg.prev[i % Bg.prev.length]) || CFG.bg.defaultColors[i % CFG.bg.defaultColors.length];
+		var b = (Bg.cur.length && Bg.cur[i % Bg.cur.length]) || CFG.bg.defaultColors[i % CFG.bg.defaultColors.length];
 		out.push(mixRgb(a, b, e));
 	}
 	return out;
@@ -935,19 +935,36 @@ function bgRender(now) {
 }
 
 function extractColors(small) {
+	if (!small) return null;
 	var list = null;
+
+	// JSP3 / Spider Monkey Panel: GetColourSchemeJSON(count) returns a JSON string
 	try {
-		if (has(small, 'GetColourScheme')) {
-			var scheme = small.GetColourScheme(4);
-			if (scheme && has(scheme, 'toArray')) list = scheme.toArray();
-			else if (Array.isArray(scheme)) list = scheme;
+		if (has(small, 'GetColourSchemeJSON')) {
+			var jsonStr = small.GetColourSchemeJSON(4);
+			if (jsonStr) {
+				var parsed = typeof jsonStr === 'string' ? JSON.parse(jsonStr) : jsonStr;
+				if (Array.isArray(parsed)) list = parsed;
+			}
 		}
-	} catch (e) { list = null; }
+	} catch (eJSON) { list = null; }
+
+	// Fallback to legacy GetColourScheme(count) if present
+	if (!list || !list.length) {
+		try {
+			if (has(small, 'GetColourScheme')) {
+				var scheme = small.GetColourScheme(4);
+				if (scheme && has(scheme, 'toArray')) list = scheme.toArray();
+				else if (Array.isArray(scheme)) list = scheme;
+			}
+		} catch (eCS) { list = null; }
+	}
+
 	if (!list || !list.length) return null;
 	var out = [];
 	for (var i = 0; i < list.length && out.length < 4; i++) {
 		var item = list[i];
-		var colVal = typeof item === 'number' ? item : (item && (item.colour !== undefined ? item.colour : item.col));
+		var colVal = typeof item === 'number' ? item : (item && (item.colour !== undefined ? item.colour : (item.col !== undefined ? item.col : item.color)));
 		if (typeof colVal === 'number') out.push(vibrant(colVal));
 	}
 	return out.length ? out : null;
@@ -1243,14 +1260,14 @@ function setCoverArt(art, metadb) {
 			colors = hashColors(String(TF_ALBUM.EvalWithMetadb(metadb)) + String(TF_ARTIST.EvalWithMetadb(metadb)));
 		}
 		if (colors) {
-			Bg.prev = Bg.cur.length ? Bg.cur : CFG.bg.defaultColors[0];
+			Bg.prev = Bg.cur.length ? Bg.cur : CFG.bg.defaultColors;
 			Bg.cur = colors;
 			Bg.mix = 0;
 		}
 	} else if (metadb) {
 		var hColors = hashColors(String(TF_ALBUM.EvalWithMetadb(metadb)) + String(TF_ARTIST.EvalWithMetadb(metadb)));
 		if (hColors) {
-			Bg.prev = Bg.cur.length ? Bg.cur : CFG.bg.defaultColors[0];
+			Bg.prev = Bg.cur.length ? Bg.cur : CFG.bg.defaultColors;
 			Bg.cur = hColors;
 			Bg.mix = 0;
 		}

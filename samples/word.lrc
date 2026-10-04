@@ -1,0 +1,8 @@
+[ti:Sample Word Synced]
+[ar:Sample Artist]
+[offset:0]
+[00:05.00]<00:05.00>First <00:05.40>line <00:05.80>of <00:06.10>sample <00:06.60>lyric<00:07.20>
+[00:08.00]<00:08.00>Another <00:08.50>lyric <00:09.00>line <00:09.50>with <00:10.00>syl<00:10.30>la<00:10.60>bles
+[00:12.00]
+[00:18.00]<00:18.00>Third <00:18.40>sample <00:18.90>line <00:19.30>that <00:19.80>is <00:20.10>long <00:20.50>enough <00:20.90>to <00:21.20>wrap <00:21.70>onto <00:22.00>a <00:22.20>second <00:22.70>row
+[00:24.00]A line without word tags inside a word file

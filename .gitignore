@@ -1,0 +1,28 @@
+# Operating system files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+
+# Editor and IDE directories
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Node / npm
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Test / debug logs
+*.log
+.temp*
+
+# Media files
+*.flac
+*.mp3
+*.m4a
+*.wav

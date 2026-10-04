@@ -1,0 +1,6 @@
+First line of sample lyric
+Another lyric line
+A third placeholder line
+
+Second paragraph first line
+Second paragraph second line
